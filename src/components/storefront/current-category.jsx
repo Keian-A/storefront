@@ -1,4 +1,5 @@
 import { connect } from 'react-redux';
+import { addCartItem } from '../../store/cart.js';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -29,7 +30,7 @@ function CurrentCategory(props) {
                         </Typography>
                     </CardContent>
                     <CardActions>
-                        <Button size="small">ADD TO CART</Button>
+                        <Button size="small" onClick={() => props.addCartItem(item)}>ADD TO CART</Button>
                         <Button size="small">VIEW DETAILS</Button>
                     </CardActions>
                 </Card>
@@ -44,4 +45,8 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(CurrentCategory);
+const mapDispatchToProps = {
+    addCartItem,
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CurrentCategory);
