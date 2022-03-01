@@ -29,7 +29,8 @@ const initalState = {
 };
 
 const categoryReducer = (state = initalState, action) => {
-    let { type, payload } = action;
+    // Removed payload
+    let { type } = action;
 
     switch (type) {
         // Add cases to manipulate state here
