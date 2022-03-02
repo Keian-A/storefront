@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { connect } from 'react-redux';
+import { deleteCartItem } from '../../store/cart.js';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
@@ -40,16 +41,18 @@ function Cart(props) {
             >
                 <Fade in={open}>
                     <Box sx={style}>
-                        {props.cart.map((item, idx) => (
+                        {props.cart ? props.cart.map((item, idx) => (
                             <div key={idx}>
+                                {console.log(props.cart)}
                                 <Typography id="transition-modal-title" variant="h6" component="h2">
                                     {item.item.name}
                                 </Typography>
                                 <Typography id="transition-modal-description" sx={{ mt: 2 }}>
                                     {item.item.description}
                                 </Typography>
+                                <Button onClick={() => props.deleteCartItem(item.item)}>DELETE ITEM</Button>
                             </div>
-                        ))}
+                        )) : null}
                     </Box>
                 </Fade>
             </Modal>
@@ -63,4 +66,8 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(Cart);
+const mapDispatchToProps = {
+    deleteCartItem,
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Cart);
