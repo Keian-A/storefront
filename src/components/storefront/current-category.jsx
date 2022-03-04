@@ -1,5 +1,5 @@
-import { connect } from 'react-redux';
-import { addCartItem } from '../../store/cart.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { add } from '../../store/cart.js';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -9,7 +9,13 @@ import Typography from '@mui/material/Typography';
 
 function CurrentCategory(props) {
 
-    let queriedProducts = props.products.products.filter(item => item.category === props.currentCategory);
+    let dispatch = useDispatch();
+    let products = useSelector(state => state.products);
+    let queriedProducts = products.products.filter(item => item.category === props.currentCategory);
+
+    function handleAddCartItem(item) {
+        dispatch(add(item));
+    }
 
     return (
         <div>
@@ -30,8 +36,7 @@ function CurrentCategory(props) {
                         </Typography>
                     </CardContent>
                     <CardActions>
-                        <Button size="small" onClick={() => props.addCartItem(item)}>ADD TO CART</Button>
-                        <Button size="small">VIEW DETAILS</Button>
+                        <Button size="small" onClick={() => handleAddCartItem(item)}>ADD TO CART</Button>
                     </CardActions>
                 </Card>
             ))}
@@ -39,14 +44,4 @@ function CurrentCategory(props) {
     );
 }
 
-const mapStateToProps = (state) => {
-    return {
-        products: state.products,
-    }
-}
-
-const mapDispatchToProps = {
-    addCartItem,
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(CurrentCategory);
+export default CurrentCategory;

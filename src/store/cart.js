@@ -1,39 +1,40 @@
-const initalState = [];
+import { createSlice } from '@reduxjs/toolkit';
 
-const cartReducer = (state = initalState, action) => {
-    let { type, payload } = action;
-
-    switch (type) {
-        case "ADD_CART_ITEM":
+const cartSlice = createSlice({
+    name: 'cart',
+    initialState: [],
+    reducers: {
+        add(state, action) {
             let temp = true;
             for (let ii = 0; ii < state.length; ii++) {
-                if (state[ii].item.name === payload.name) {
+                if (state[ii].item.name === action.payload.name) {
                     temp = false;
                 }
             }
             if (temp) {
-                return [...state, { item: payload }];
+                state.push({ item: action.payload, count: 1 });
             }
-            return state;
-        case "DELETE_CART_ITEM":
-            return state.filter(element => element.item.name !== payload.name);
-        default:
-            return state;
+        },
+        remove(state, action) {
+            return state.filter(element => element.item.name !== action.payload.name);
+        },
+        addItemToCart(state, action) {
+            for (let ii = 0; ii < state.length; ii++) {
+                if (state[ii].item.name === action.payload.item.name) {
+                    state[ii].count++;
+                }
+            }
+        },
+        removeItemFromCart(state, action) {
+            for (let ii = 0; ii < state.length; ii++) {
+                if (state[ii].item.name === action.payload.item.name) {
+                    state[ii].count--;
+                }
+            }
+        }
     }
-}
+});
 
-export const addCartItem = (item) => {
-    return {
-        type: "ADD_CART_ITEM",
-        payload: item
-    }
-}
+export const { add, remove, addItemToCart, removeItemFromCart } = cartSlice.actions;
 
-export const deleteCartItem = (item) => {
-    return {
-        type: "DELETE_CART_ITEM",
-        payload: item
-    }
-}
-
-export default cartReducer;
+export default cartSlice;

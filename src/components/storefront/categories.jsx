@@ -19,7 +19,7 @@ function Categories(props) {
 
     return (
         <div>
-            <Button onClick={toggleDrawer}>Product Categories</Button>
+            <Button onClick={toggleDrawer} data-testid="activeCategory">Product Categories</Button>
             {currentCategory !== '' ?
                 props.categories.categories.filter(item => item.displayName === currentCategory).map((item, idx) => (
                     <div key={idx}>
