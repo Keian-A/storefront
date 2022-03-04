@@ -1,18 +1,18 @@
-import { createStore, combineReducers } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
+// Redux imports
+import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers } from 'redux';
 
-import categoryReducer from './categories.js';
-import productReducer from './products.js';
-import cartReducer from './cart.js';
+// Esoteric imports
+import categorySlice from './categories.js';
+import productSlice from './products.js';
+import cartSlice from './cart.js';
 
 const reducers = combineReducers({
-    categories: categoryReducer,
-    products: productReducer,
-    cart: cartReducer,
+    categories: categorySlice.reducer,
+    products: productSlice.reducer,
+    cart: cartSlice.reducer,
 });
 
-const createReduxStore = () => {
-    return createStore(reducers, composeWithDevTools());
-}
+const store = configureStore({ reducer: reducers })
 
-export default createReduxStore;
+export default store;

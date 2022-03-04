@@ -1,12 +1,13 @@
-import { useState } from 'react';
-import { connect } from 'react-redux';
-import { deleteCartItem } from '../../store/cart.js';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { remove, addItemToCart, removeItemFromCart } from '../../store/cart.js';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import '../../css/cart.css';
 
 const style = {
     position: 'absolute',
@@ -22,12 +23,35 @@ const style = {
 
 function Cart(props) {
 
+    let dispatch = useDispatch();
+    let cart = useSelector(state => state.cart);
     const [open, setOpen] = useState(false);
     const toggleOpen = () => setOpen(!open);
+    const [total, setTotal] = useState(0);
+
+    useEffect(() => {
+        let temp = 0;
+        cart.forEach(element => {
+            temp += (element.item.price * element.count);
+        });
+        setTotal(temp);
+    }, [cart]);
+
+    const handleIncrement = (item) => {
+        dispatch(addItemToCart(item));
+    };
+
+    const handleDecrement = (item) => {
+        dispatch(removeItemFromCart(item));
+    };
+
+    function handleRemoveCartItem(item) {
+        dispatch(remove(item));
+    }
 
     return (
         <div>
-            <Button onClick={toggleOpen}>Cart: ({props.cart.length === 0 ? '0' : props.cart.length})</Button>
+            <Button data-testid="cartTestClass" onClick={toggleOpen}>Cart: ({cart.length})</Button>
             <Modal
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"
@@ -41,18 +65,49 @@ function Cart(props) {
             >
                 <Fade in={open}>
                     <Box sx={style}>
-                        {props.cart ? props.cart.map((item, idx) => (
+                        {cart ? cart.map((item, idx) => (
                             <div key={idx}>
-                                {console.log(props.cart)}
                                 <Typography id="transition-modal-title" variant="h6" component="h2">
                                     {item.item.name}
                                 </Typography>
                                 <Typography id="transition-modal-description" sx={{ mt: 2 }}>
                                     {item.item.description}
                                 </Typography>
-                                <Button onClick={() => props.deleteCartItem(item.item)}>DELETE ITEM</Button>
+                                <Typography id="transition-modal-description" sx={{ mt: 2 }}>
+                                    Total in cart: {item.count}
+                                </Typography>
+                                <Button onClick={() => handleIncrement(item)} type="button" >Add</Button>
+                                {item.count > 1 ? (
+                                    <Button onClick={() => handleDecrement(item)} type="button" >Remove</Button>
+                                ) : null}
+                                <Button onClick={() => handleRemoveCartItem(item.item)}>DELETE ITEM</Button>
                             </div>
                         )) : null}
+                        <div>
+                            <h4>Total: ${total}</h4>
+                        </div>
+                        <div>
+                            <form>
+                                <h3>Payment Information</h3>
+                                <label className="paymentLabel">First name</label>
+                                <input type="text" />
+                                <label className="paymentLabel">Last name</label>
+                                <input type="text" />
+                                <label className="paymentLabel">Email</label>
+                                <input type="text" />
+                                <label className="paymentLabel">Date of birth</label>
+                                <input type="date" />
+                                <label className="paymentLabel">Card number</label>
+                                <input type="number" />
+                                <label className="paymentLabel">CVV</label>
+                                <input type="number" />
+                                <label className="paymentLabel">Card expiration date</label>
+                                <input type="month" />
+                                <label className="paymentLabel">
+                                    <input type="button" value="Pay now" />
+                                </label>
+                            </form>
+                        </div>
                     </Box>
                 </Fade>
             </Modal>
@@ -60,14 +115,4 @@ function Cart(props) {
     );
 }
 
-const mapStateToProps = (state) => {
-    return {
-        cart: state.cart,
-    }
-}
-
-const mapDispatchToProps = {
-    deleteCartItem,
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Cart);
+export default Cart;
